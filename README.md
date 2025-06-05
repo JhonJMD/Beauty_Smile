@@ -195,15 +195,6 @@ SESSION_SECRET=tu_clave_secreta
 - [x] Validaciones de formularios
 - [x] Manejo de errores
 
-### 🔄 Por Implementar (Futuras Mejoras)
-- [ ] Historiales clínicos detallados
-- [ ] Sistema de recordatorios
-- [ ] Reportes en PDF
-- [ ] Calendario visual de citas
-- [ ] Gestión de inventarios
-- [ ] Sistema de facturación
-- [ ] Notificaciones por email/SMS
-
 ## 🐛 Solución de Problemas
 
 ### Error de Conexión a la Base de Datos
