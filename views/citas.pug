@@ -1,0 +1,152 @@
+extends layout
+
+block contenido
+    .d-flex.justify-content-between.align-items-center.mb-4
+        h1.display-6
+            i.fas.fa-calendar-alt.me-3.text-primary
+            | Gestión de Citas
+        a.btn.btn-primary(href="/citas/nueva")
+            i.fas.fa-plus.me-2
+            | Nueva Cita
+    
+    .card.shadow-sm
+        .card-header.bg-light
+            .row.align-items-center
+                .col-md-6
+                    form.d-flex(method="GET", action="/citas")
+                        input.form-control.me-2(
+                            type="search", 
+                            name="buscar", 
+                            placeholder="Buscar por paciente...",
+                            value=buscar
+                        )
+                        button.btn.btn-outline-primary(type="submit")
+                            i.fas.fa-search
+                .col-md-3
+                    form(method="GET", action="/citas")
+                        select.form-select(name="estado", onchange="this.form.submit()")
+                            option(value="", selected=!estado) Todos los estados
+                            option(value="programada", selected=estado === 'programada') Programada
+                            option(value="completada", selected=estado === 'completada') Completada
+                            option(value="cancelada", selected=estado === 'cancelada') Cancelada
+                            option(value="no_asistio", selected=estado === 'no_asistio') No asistió
+                .col-md-3.text-end
+                    span.badge.bg-primary.fs-6= `${citas.length} cita${citas.length !== 1 ? 's' : ''}`
+        
+        .card-body.p-0
+            if citas.length > 0
+                .table-responsive
+                    table.table.table-hover.mb-0
+                        thead.table-light
+                            tr
+                                th #
+                                th Paciente
+                                th Servicio
+                                th Doctor
+                                th Fecha y Hora
+                                th Estado
+                                th Acciones
+                        tbody
+                            each cita, index in citas
+                                tr
+                                    td.fw-bold= index + 1
+                                    td
+                                        .d-flex.align-items-center
+                                            .avatar.bg-info.text-white.rounded-circle.d-flex.align-items-center.justify-content-center.me-3(
+                                                style="width: 40px; height: 40px;"
+                                            )
+                                                = cita.paciente.nombre.charAt(0).toUpperCase()
+                                            div
+                                                .fw-bold= `${cita.paciente.nombre} ${cita.paciente.apellido}`
+                                                small.text-muted= cita.paciente.cedula
+                                    td= cita.servicio.nombre
+                                    td= cita.doctor.nombre
+                                    td
+                                        .fw-bold= new Date(cita.fecha_cita).toLocaleDateString('es-ES')
+                                        small.text-muted= cita.hora_cita
+                                    td
+                                        if cita.estado === 'programada'
+                                            span.badge.bg-primary= 'Programada'
+                                        else if cita.estado === 'completada'
+                                            span.badge.bg-success= 'Completada'
+                                        else if cita.estado === 'cancelada'
+                                            span.badge.bg-danger= 'Cancelada'
+                                        else if cita.estado === 'no_asistio'
+                                            span.badge.bg-warning= 'No asistió'
+                                    td
+                                        .btn-group(role="group")
+                                            a.btn.btn-outline-info.btn-sm(
+                                                href=`/citas/ver/${cita.id}`,
+                                                title="Ver detalles"
+                                            )
+                                                i.fas.fa-eye
+                                            if cita.estado === 'programada'
+                                                .dropdown
+                                                    button.btn.btn-outline-warning.btn-sm.dropdown-toggle(
+                                                        type="button",
+                                                        data-bs-toggle="dropdown",
+                                                        title="Cambiar estado"
+                                                    )
+                                                        i.fas.fa-edit
+                                                    ul.dropdown-menu
+                                                        li
+                                                            button.dropdown-item(
+                                                                onclick=`cambiarEstado('${cita.id}', 'completada')`
+                                                            )
+                                                                i.fas.fa-check.text-success.me-2
+                                                                | Completada
+                                                        li
+                                                            button.dropdown-item(
+                                                                onclick=`cambiarEstado('${cita.id}', 'no_asistio')`
+                                                            )
+                                                                i.fas.fa-times.text-warning.me-2
+                                                                | No asistió
+                                                        li
+                                                            button.dropdown-item(
+                                                                onclick=`cambiarEstado('${cita.id}', 'cancelada')`
+                                                            )
+                                                                i.fas.fa-ban.text-danger.me-2
+                                                                | Cancelar
+            else
+                .text-center.py-5
+                    .display-1.text-muted.mb-3
+                        i.fas.fa-calendar-times
+                    h4.text-muted No se encontraron citas
+                    if buscar || estado
+                        p.text-muted Intenta con otros filtros de búsqueda
+                        a.btn.btn-outline-primary(href="/citas") Mostrar todas
+                    else
+                        p.text-muted Comienza programando la primera cita
+                        a.btn.btn-primary(href="/citas/nueva")
+                            i.fas.fa-plus.me-2
+                            | Programar Primera Cita
+
+    script.
+        function cambiarEstado(citaId, nuevoEstado) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Deseas cambiar el estado de esta cita?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Crear formulario y enviarlo
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/citas/estado/${citaId}`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'estado';
+                    input.value = nuevoEstado;
+                    
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }

@@ -1,0 +1,12 @@
+extends layout
+
+block contenido
+    .row.justify-content-center
+        .col-md-6
+            .card.text-center
+                .card-body
+                    .display-1.text-muted.mb-4
+                        i.fas.fa-exclamation-triangle
+                    h2.card-title= pagina
+                    p.card-text.text-muted= mensaje
+                    a.btn.btn-primary(href="/dashboard") Volver al Dashboard

@@ -1,0 +1,126 @@
+extends layout
+
+block contenido
+    .d-flex.justify-content-between.align-items-center.mb-4
+        h1.display-6
+            i.fas.fa-users.me-3.text-primary
+            | Gestión de Pacientes
+        a.btn.btn-primary(href="/pacientes/nuevo")
+            i.fas.fa-plus.me-2
+            | Nuevo Paciente
+    
+    .card.shadow-sm
+        .card-header.bg-light
+            .row.align-items-center
+                .col-md-8
+                    form.d-flex(method="GET", action="/pacientes")
+                        input.form-control.me-2(
+                            type="search", 
+                            name="buscar", 
+                            placeholder="Buscar por nombre, apellido o cédula...",
+                            value=buscar
+                        )
+                        button.btn.btn-outline-primary(type="submit")
+                            i.fas.fa-search
+                .col-md-4.text-end
+                    span.badge.bg-primary.fs-6= `${pacientes.length} paciente${pacientes.length !== 1 ? 's' : ''}`
+        
+        .card-body.p-0
+            if pacientes.length > 0
+                .table-responsive
+                    table.table.table-hover.mb-0
+                        thead.table-light
+                            tr
+                                th #
+                                th Nombre Completo
+                                th Cédula
+                                th Teléfono
+                                th Email
+                                th Fecha Registro
+                                th Acciones
+                        tbody
+                            each paciente, index in pacientes
+                                tr
+                                    td.fw-bold= index + 1
+                                    td
+                                        .d-flex.align-items-center
+                                            .avatar.bg-primary.text-white.rounded-circle.d-flex.align-items-center.justify-content-center.me-3(
+                                                style="width: 40px; height: 40px;"
+                                            )
+                                                = paciente.nombre.charAt(0).toUpperCase()
+                                            div
+                                                .fw-bold= `${paciente.nombre} ${paciente.apellido}`
+                                                if paciente.fecha_nacimiento
+                                                    small.text-muted= `Edad: ${new Date().getFullYear() - new Date(paciente.fecha_nacimiento).getFullYear()} años`
+                                    td
+                                        span.badge.bg-secondary= paciente.cedula
+                                    td
+                                        if paciente.telefono
+                                            a(href=`tel:${paciente.telefono}`)= paciente.telefono
+                                        else
+                                            span.text-muted No registrado
+                                    td
+                                        if paciente.email
+                                            a(href=`mailto:${paciente.email}`)= paciente.email
+                                        else
+                                            span.text-muted No registrado
+                                    td
+                                        small.text-muted= new Date(paciente.fecha_creacion).toLocaleDateString('es-ES')
+                                    td
+                                        .btn-group(role="group")
+                                            a.btn.btn-outline-primary.btn-sm(
+                                                href=`/pacientes/editar/${paciente.id}`,
+                                                title="Editar paciente"
+                                            )
+                                                i.fas.fa-edit
+                                            button.btn.btn-outline-info.btn-sm(
+                                                onclick=`verDetalles('${paciente.id}', '${paciente.nombre}', '${paciente.apellido}', '${paciente.cedula}', '${paciente.telefono || ''}', '${paciente.email || ''}', '${paciente.direccion || ''}')`,
+                                                title="Ver detalles"
+                                            )
+                                                i.fas.fa-eye
+            else
+                .text-center.py-5
+                    .display-1.text-muted.mb-3
+                        i.fas.fa-user-slash
+                    h4.text-muted No se encontraron pacientes
+                    if buscar
+                        p.text-muted Intenta con otros términos de búsqueda
+                        a.btn.btn-outline-primary(href="/pacientes") Mostrar todos
+                    else
+                        p.text-muted Comienza registrando tu primer paciente
+                        a.btn.btn-primary(href="/pacientes/nuevo")
+                            i.fas.fa-plus.me-2
+                            | Registrar Primer Paciente
+
+    // Modal para ver detalles
+    .modal.fade#modalDetalles(tabindex="-1")
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                    h5.modal-title Detalles del Paciente
+                    button.btn-close(type="button", data-bs-dismiss="modal")
+                .modal-body
+                    #contenidoDetalles
+                .modal-footer
+                    button.btn.btn-secondary(data-bs-dismiss="modal") Cerrar
+
+    script.
+        function verDetalles(id, nombre, apellido, cedula, telefono, email, direccion) {
+            const contenido = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Información Personal</h6>
+                        <p><strong>Nombre:</strong> ${nombre} ${apellido}</p>
+                        <p><strong>Cédula:</strong> ${cedula}</p>
+                        <p><strong>Teléfono:</strong> ${telefono || 'No registrado'}</p>
+                        <p><strong>Email:</strong> ${email || 'No registrado'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Dirección</h6>
+                        <p>${direccion || 'No registrada'}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('contenidoDetalles').innerHTML = contenido;
+            new bootstrap.Modal(document.getElementById('modalDetalles')).show();
+        }

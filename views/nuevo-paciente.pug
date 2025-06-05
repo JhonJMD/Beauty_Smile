@@ -1,0 +1,116 @@
+extends layout
+
+block contenido
+    .row.justify-content-center
+        .col-lg-8
+            .card.shadow-sm
+                .card-header.bg-primary.text-white
+                    h4.mb-0
+                        i.fas.fa-user-plus.me-2
+                        | Registrar Nuevo Paciente
+                
+                .card-body
+                    nav(aria-label="breadcrumb")
+                        ol.breadcrumb
+                            li.breadcrumb-item
+                                a(href="/dashboard") Dashboard
+                            li.breadcrumb-item
+                                a(href="/pacientes") Pacientes
+                            li.breadcrumb-item.active(aria-current="page") Nuevo Paciente
+                    
+                    if errores.general
+                        .alert.alert-danger.alert-dismissible.fade.show
+                            = errores.general
+                            button.btn-close(type="button", data-bs-dismiss="alert")
+                    
+                    form(method="POST", action="/pacientes")
+                        .row
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="nombre") Nombre *
+                                    input.form-control(
+                                        type="text",
+                                        id="nombre",
+                                        name="nombre",
+                                        value=paciente.nombre || '',
+                                        class=errores.nombre ? 'is-invalid' : '',
+                                        required
+                                    )
+                                    if errores.nombre
+                                        .invalid-feedback= errores.nombre
+                            
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="apellido") Apellido *
+                                    input.form-control(
+                                        type="text",
+                                        id="apellido",
+                                        name="apellido",
+                                        value=paciente.apellido || '',
+                                        class=errores.apellido ? 'is-invalid' : '',
+                                        required
+                                    )
+                                    if errores.apellido
+                                        .invalid-feedback= errores.apellido
+                        
+                        .row
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="cedula") Cédula *
+                                    input.form-control(
+                                        type="text",
+                                        id="cedula",
+                                        name="cedula",
+                                        value=paciente.cedula || '',
+                                        class=errores.cedula ? 'is-invalid' : '',
+                                        required
+                                    )
+                                    if errores.cedula
+                                        .invalid-feedback= errores.cedula
+                            
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="telefono") Teléfono
+                                    input.form-control(
+                                        type="tel",
+                                        id="telefono",
+                                        name="telefono",
+                                        value=paciente.telefono || ''
+                                    )
+                        
+                        .row
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="email") Correo Electrónico
+                                    input.form-control(
+                                        type="email",
+                                        id="email",
+                                        name="email",
+                                        value=paciente.email || ''
+                                    )
+                            
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="fecha_nacimiento") Fecha de Nacimiento
+                                    input.form-control(
+                                        type="date",
+                                        id="fecha_nacimiento",
+                                        name="fecha_nacimiento",
+                                        value=paciente.fecha_nacimiento || ''
+                                    )
+                        
+                        .mb-3
+                            label.form-label(for="direccion") Dirección
+                            textarea.form-control(
+                                id="direccion",
+                                name="direccion",
+                                rows="3"
+                            )= paciente.direccion || ''
+                        
+                        .d-flex.justify-content-between
+                            a.btn.btn-outline-secondary(href="/pacientes")
+                                i.fas.fa-arrow-left.me-2
+                                | Volver
+                            button.btn.btn-primary(type="submit")
+                                i.fas.fa-save.me-2
+                                | Guardar Paciente

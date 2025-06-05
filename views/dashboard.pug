@@ -1,0 +1,84 @@
+extends layout
+
+block contenido
+    .row
+        .col-12
+            h1.display-6.mb-4
+                i.fas.fa-home.me-3.text-primary
+                | Dashboard
+            p.lead.text-muted Bienvenido al sistema de gestión de Beauty Smile
+    
+    .row.g-4.mb-5
+        .col-md-4
+            .card.border-0.shadow-sm.h-100
+                .card-body.text-center
+                    .display-1.text-primary.mb-3
+                        i.fas.fa-users
+                    h3.card-title= stats.totalPacientes
+                    p.card-text.text-muted Total de Pacientes Registrados
+                    a.btn.btn-outline-primary(href="/pacientes")
+                        | Ver Pacientes
+                        i.fas.fa-arrow-right.ms-2
+        
+        .col-md-4
+            .card.border-0.shadow-sm.h-100
+                .card-body.text-center
+                    .display-1.text-success.mb-3
+                        i.fas.fa-calendar-check
+                    h3.card-title= stats.totalCitas
+                    p.card-text.text-muted Total de Citas Programadas
+                    a.btn.btn-outline-success(href="/citas")
+                        | Ver Citas
+                        i.fas.fa-arrow-right.ms-2
+        
+        .col-md-4
+            .card.border-0.shadow-sm.h-100
+                .card-body.text-center
+                    .display-1.text-warning.mb-3
+                        i.fas.fa-calendar-day
+                    h3.card-title= stats.citasHoy
+                    p.card-text.text-muted Citas para Hoy
+                    a.btn.btn-outline-warning(href="/citas?fecha=" + new Date().toISOString().split('T')[0])
+                        | Ver Citas de Hoy
+                        i.fas.fa-arrow-right.ms-2
+    
+    .row
+        .col-lg-6
+            .card.border-0.shadow-sm
+                .card-header.bg-primary.text-white
+                    h5.card-title.mb-0
+                        i.fas.fa-plus.me-2
+                        | Acciones Rápidas
+                .card-body
+                    .d-grid.gap-2
+                        a.btn.btn-primary.py-3(href="/pacientes/nuevo")
+                            i.fas.fa-user-plus.me-2
+                            | Registrar Nuevo Paciente
+                        a.btn.btn-success.py-3(href="/citas/nueva")
+                            i.fas.fa-calendar-plus.me-2
+                            | Programar Nueva Cita
+        
+        .col-lg-6
+            .card.border-0.shadow-sm
+                .card-header.bg-info.text-white
+                    h5.card-title.mb-0
+                        i.fas.fa-info-circle.me-2
+                        | Información del Sistema
+                .card-body
+                    .row.text-center
+                        .col-6
+                            .border-end
+                                h6.text-muted Usuario Activo
+                                p.fw-bold.text-primary= usuario.nombre
+                        .col-6
+                            h6.text-muted Rol
+                            p.fw-bold.text-success= usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)
+                    hr
+                    small.text-muted
+                        i.fas.fa-clock.me-1
+                        | Última conexión: 
+                        span#fecha-actual
+    
+    script.
+        // Mostrar fecha y hora actual
+        document.getElementById('fecha-actual').textContent = new Date().toLocaleString('es-ES');

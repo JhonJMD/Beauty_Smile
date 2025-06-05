@@ -1,0 +1,160 @@
+extends layout
+
+block contenido
+    .row.justify-content-center
+        .col-lg-8
+            .card.shadow-sm
+                .card-header.bg-success.text-white
+                    h4.mb-0
+                        i.fas.fa-calendar-plus.me-2
+                        | Programar Nueva Cita
+                
+                .card-body
+                    nav(aria-label="breadcrumb")
+                        ol.breadcrumb
+                            li.breadcrumb-item
+                                a(href="/dashboard") Dashboard
+                            li.breadcrumb-item
+                                a(href="/citas") Citas
+                            li.breadcrumb-item.active(aria-current="page") Nueva Cita
+                    
+                    if errores.general
+                        .alert.alert-danger.alert-dismissible.fade.show
+                            = errores.general
+                            button.btn-close(type="button", data-bs-dismiss="alert")
+                    
+                    form(method="POST", action="/citas")
+                        .row
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="paciente_id") Paciente *
+                                    select.form-select(
+                                        id="paciente_id",
+                                        name="paciente_id",
+                                        class=errores.paciente_id ? 'is-invalid' : '',
+                                        required
+                                    )
+                                        option(value="") Seleccionar paciente...
+                                        each paciente in pacientes
+                                            option(
+                                                value=paciente.id,
+                                                selected=cita.paciente_id == paciente.id
+                                            )= `${paciente.nombre} ${paciente.apellido} - ${paciente.cedula}`
+                                    if errores.paciente_id
+                                        .invalid-feedback= errores.paciente_id
+                            
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="servicio_id") Servicio *
+                                    select.form-select(
+                                        id="servicio_id",
+                                        name="servicio_id",
+                                        class=errores.servicio_id ? 'is-invalid' : '',
+                                        required
+                                    )
+                                        option(value="") Seleccionar servicio...
+                                        each servicio in servicios
+                                            option(
+                                                value=servicio.id,
+                                                selected=cita.servicio_id == servicio.id,
+                                                data-precio=servicio.precio,
+                                                data-duracion=servicio.duracion_minutos
+                                            )= `${servicio.nombre} - $${servicio.precio.toLocaleString()}`
+                                    if errores.servicio_id
+                                        .invalid-feedback= errores.servicio_id
+                        
+                        .row
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="usuario_id") Doctor *
+                                    select.form-select(
+                                        id="usuario_id",
+                                        name="usuario_id",
+                                        class=errores.usuario_id ? 'is-invalid' : '',
+                                        required
+                                    )
+                                        option(value="") Seleccionar doctor...
+                                        each doctor in doctores
+                                            option(
+                                                value=doctor.id,
+                                                selected=cita.usuario_id == doctor.id
+                                            )= doctor.nombre
+                                    if errores.usuario_id
+                                        .invalid-feedback= errores.usuario_id
+                            
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="fecha_cita") Fecha *
+                                    input.form-control(
+                                        type="date",
+                                        id="fecha_cita",
+                                        name="fecha_cita",
+                                        value=cita.fecha_cita || '',
+                                        class=errores.fecha_cita ? 'is-invalid' : '',
+                                        min=new Date().toISOString().split('T')[0],
+                                        required
+                                    )
+                                    if errores.fecha_cita
+                                        .invalid-feedback= errores.fecha_cita
+                        
+                        .row
+                            .col-md-6
+                                .mb-3
+                                    label.form-label(for="hora_cita") Hora *
+                                    input.form-control(
+                                        type="time",
+                                        id="hora_cita",
+                                        name="hora_cita",
+                                        value=cita.hora_cita || '',
+                                        class=errores.hora_cita ? 'is-invalid' : '',
+                                        required
+                                    )
+                                    if errores.hora_cita
+                                        .invalid-feedback= errores.hora_cita
+                                    small.form-text.text-muted Horario de atención: 8:00 AM - 6:00 PM
+                            
+                            .col-md-6
+                                .mb-3
+                                    label.form-label Información del Servicio
+                                    .card.bg-light
+                                        .card-body.py-2
+                                            .row.text-center
+                                                .col-6
+                                                    small.text-muted Precio
+                                                    .fw-bold#precio-servicio -
+                                                .col-6
+                                                    small.text-muted Duración
+                                                    .fw-bold#duracion-servicio -
+                        
+                        .mb-3
+                            label.form-label(for="observaciones") Observaciones
+                            textarea.form-control(
+                                id="observaciones",
+                                name="observaciones",
+                                rows="3",
+                                placeholder="Notas adicionales sobre la cita..."
+                            )= cita.observaciones || ''
+                        
+                        .d-flex.justify-content-between
+                            a.btn.btn-outline-secondary(href="/citas")
+                                i.fas.fa-arrow-left.me-2
+                                | Volver
+                            button.btn.btn-success(type="submit")
+                                i.fas.fa-save.me-2
+                                | Programar Cita
+    
+    script.
+        // Actualizar información del servicio cuando se selecciona
+        document.getElementById('servicio_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const precio = selectedOption.dataset.precio;
+            const duracion = selectedOption.dataset.duracion;
+            
+            document.getElementById('precio-servicio').textContent = precio ? `$${parseFloat(precio).toLocaleString()}` : '-';
+            document.getElementById('duracion-servicio').textContent = duracion ? `${duracion} min` : '-';
+        });
+        
+        // Trigger inicial si hay servicio seleccionado
+        if (document.getElementById('servicio_id').value) {
+            document.getElementById('servicio_id').dispatchEvent(new Event('change'));
+        }
