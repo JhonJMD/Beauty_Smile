@@ -2,6 +2,14 @@
 
 Sistema web desarrollado para la gestión integral de una clínica odontológica, incluyendo administración de pacientes, programación de citas y seguimiento de historiales clínicos.
 
+## 🌐 Demo en Vivo
+
+**🚀 Accede a la aplicación aquí:** [https://beauty-smile.onrender.com](https://beauty-smile.onrender.com)
+
+### 👤 Credenciales de Prueba
+- **Email**: `admin@beautysmile.com`
+- **Contraseña**: `admin123`
+
 ## 🚀 Características
 
 - **Gestión de Pacientes**: Registro, edición y búsqueda de pacientes
@@ -20,6 +28,8 @@ Sistema web desarrollado para la gestión integral de una clínica odontológica
 - **Autenticación**: Express-session + bcrypt
 - **Estilos**: Bootstrap 5 + CSS personalizado
 - **Iconos**: Font Awesome
+- **Deployment**: Render.com
+- **Base de Datos**: Filess.io (MySQL en la nube)
 
 ## 📋 Requisitos Previos
 
@@ -27,11 +37,11 @@ Sistema web desarrollado para la gestión integral de una clínica odontológica
 - MySQL (versión 5.7 o superior)
 - npm o yarn
 
-## 🔧 Instalación
+## 🔧 Instalación Local
 
 ### 1. Clonar el repositorio
 ```bash
-git clone [URL_DEL_REPOSITORIO]
+git clone https://github.com/JhonJMD/beauty-smile-clinic.git
 cd beauty-smile-clinic
 ```
 
@@ -77,16 +87,6 @@ npm start
 
 La aplicación estará disponible en `http://localhost:3000`
 
-## 👤 Usuarios de Prueba
-
-### Administrador
-- **Email**: admin@beautysmile.com
-- **Contraseña**: admin123
-
-### Doctor
-- **Email**: doctor@beautysmile.com
-- **Contraseña**: admin123
-
 ## 📁 Estructura del Proyecto
 
 ```
@@ -117,6 +117,8 @@ beauty-smile-clinic/
 ├── public/
 │   └── css/
 │       └── style.css       # Estilos personalizados
+├── utils/
+│   └── hashPassword.js     # Utilidad para generar hashes
 ├── package.json
 ├── index.js                # Archivo principal
 └── README.md
@@ -157,6 +159,12 @@ beauty-smile-clinic/
 - Un doctor puede atender múltiples citas
 - Un servicio puede estar en múltiples citas
 
+### Datos Iniciales Incluidos
+- 2 usuarios (administrador y doctor)
+- 6 servicios odontológicos predefinidos
+- 2 pacientes de ejemplo
+- 3 citas de muestra
+
 ## 🎨 Características de la Interfaz
 
 - **Diseño Responsive**: Se adapta a móviles, tablets y escritorio
@@ -164,36 +172,69 @@ beauty-smile-clinic/
 - **Navegación Intuitiva**: Menú claro y breadcrumbs
 - **Feedback Visual**: Alertas, notificaciones y estados
 - **Búsqueda y Filtros**: Funcionalidad de búsqueda en pacientes y citas
+- **Animaciones Suaves**: Transiciones y efectos visuales mejorados
 
 ## 🚀 Despliegue
 
-### Render
-1. Conecta tu repositorio a Render
-2. Configura las variables de entorno para la base de datos
-3. Despliega automáticamente
+### Render.com (Producción)
+La aplicación está desplegada en Render.com y disponible en:
+**https://beauty-smile.onrender.com**
 
-### Variables de Entorno Recomendadas
-```env
-NODE_ENV=production
-DB_HOST=tu_host
-DB_NAME=tu_base_de_datos
-DB_USER=tu_usuario
-DB_PASS=tu_password
-DB_PORT=3307
-SESSION_SECRET=tu_clave_secreta
+
+### Despliegue Local en Otros Servicios
+
+#### Heroku
+```bash
+# Instalar Heroku CLI
+npm install -g heroku
+
+# Login y crear app
+heroku login
+heroku create tu-app-name
+
+# Configurar variables de entorno
+heroku config:set DB_HOST=tu_host
+heroku config:set DB_NAME=tu_db_name
+# ... otras variables
+
+# Desplegar
+git push heroku main
+```
+
+#### Railway
+```bash
+# Instalar Railway CLI
+npm install -g @railway/cli
+
+# Login y desplegar
+railway login
+railway link
+railway up
 ```
 
 ## 🧪 Funcionalidades Implementadas
 
 ### ✅ Completadas
-- [x] Sistema de autenticación
-- [x] Dashboard con estadísticas
-- [x] CRUD completo de pacientes
-- [x] CRUD de citas con estados
-- [x] Interfaz responsive
-- [x] Búsqueda y filtros
-- [x] Validaciones de formularios
-- [x] Manejo de errores
+- [x] Sistema de autenticación seguro
+- [x] Dashboard con estadísticas en tiempo real
+- [x] CRUD completo de pacientes con validaciones
+- [x] CRUD de citas con gestión de estados
+- [x] Interfaz responsive y moderna
+- [x] Búsqueda y filtros avanzados
+- [x] Validaciones de formularios frontend y backend
+- [x] Manejo robusto de errores
+- [x] Sesiones seguras y persistentes
+- [x] Deployment en producción
+- [x] Base de datos en la nube
+
+## 🔒 Seguridad
+
+- **Contraseñas encriptadas** con bcrypt
+- **Sesiones seguras** con express-session
+- **Validación de datos** en frontend y backend
+- **Protección CSRF** implementada
+- **Sanitización de inputs** para prevenir inyecciones
+- **Headers de seguridad** configurados
 
 ## 🐛 Solución de Problemas
 
@@ -201,21 +242,60 @@ SESSION_SECRET=tu_clave_secreta
 1. Verifica que MySQL esté ejecutándose
 2. Confirma las credenciales en `config/db.js`
 3. Asegúrate de que la base de datos existe
+4. Revisa la conectividad de red (firewall/puertos)
 
 ### Error de Dependencias
 ```bash
+# Limpiar e instalar
+rm -rf node_modules package-lock.json
+npm install
+
+# Si persiste el error
 npm install --force
 ```
 
 ### Puerto en Uso
 ```bash
-# Cambiar puerto en index.js o terminar proceso
+# Verificar qué proceso usa el puerto
+lsof -ti:3000
+
+# Terminar proceso
 lsof -ti:3000 | xargs kill -9
+
+# O cambiar puerto en index.js
+const PORT = process.env.PORT || 3001;
 ```
 
-## 📞 Soporte
+### Problemas con Render.com
+- **Cold Start**: La primera carga puede tardar 30-60 segundos
+- **Logs**: Revisa los logs en el dashboard de Render
+- **Environment Variables**: Verifica que estén configuradas correctamente
 
-Para reportar problemas o solicitar nuevas características, por favor crea un issue en el repositorio.
+## 📱 Compatibilidad
+
+### Navegadores Soportados
+- ✅ Chrome 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Edge 90+
+
+### Dispositivos
+- ✅ Desktop (1200px+)
+- ✅ Tablet (768px - 1199px)
+- ✅ Mobile (320px - 767px)
+
+## 🏗️ Arquitectura Técnica
+
+### Patrón MVC Implementado
+- **Model**: Sequelize ORM para gestión de datos
+- **View**: Plantillas Pug con Bootstrap 5
+- **Controller**: Lógica de negocio en Express.js
+
+### Base de Datos
+- **Motor**: MySQL 8.0+
+- **ORM**: Sequelize 6.x
+- **Conexiones**: Pool de conexiones configurado
+- **Migraciones**: Esquema SQL incluido
 
 ## 📄 Licencia
 
