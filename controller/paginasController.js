@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs';
 import Usuario from '../models/Usuario.js';
 import Paciente from '../models/Paciente.js';
 import Servicio from '../models/Servicio.js';
@@ -34,7 +34,7 @@ const autenticar = async (req, res) => {
         
         console.log('✅ Usuario encontrado:', usuario.nombre);
         
-        const passwordValido = await bcrypt.compare(password, usuario.password);
+        const passwordValido = await bcryptjs.compare(password, usuario.password);
         console.log('🔐 Resultado comparación:', passwordValido);
         
         if (!passwordValido) {
